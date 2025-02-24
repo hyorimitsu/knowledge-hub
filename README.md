@@ -2,6 +2,8 @@
 
 Knowledge Hub is a multi-tenant knowledge sharing platform built with modern technologies.
 
+This project is primarily generated using [Roo Code](https://github.com/RooInc/roo-code) (previously known as Roo Cline), an AI-powered development tool.
+
 ## Project Structure
 
 ```
@@ -51,4 +53,4 @@ Knowledge Hub is a multi-tenant knowledge sharing platform built with modern tec
 🚧 Currently under development
 
 ## License
-This project is private and confidential.
+This project is open source and available under the MIT License.
