@@ -5,3 +5,55 @@ services:
       - ./frontend:/app
     environment:
       - NODE_ENV=development
+
+  go:
+    build:
+      context: ./backend
+      dockerfile: ../docker/backend/Dockerfile
+    volumes:
+      - ./backend:/go/src/github.com/hyorimitsu/knowledge-hub/backend
+    working_dir: /go/src/github.com/hyorimitsu/knowledge-hub/backend
+    profiles:
+      - tools
+
+  test:
+    extends:
+      service: go
+    command: go test -v ./...
+    profiles:
+      - tools
+
+  lint:
+    extends:
+      service: go
+    command: golangci-lint run
+    profiles:
+      - tools
+
+  swag:
+    extends:
+      service: go
+    command: swag init -g cmd/api/main.go -o docs/openapi
+    profiles:
+      - tools
+
+  tidy:
+    extends:
+      service: go
+    command: go mod tidy
+    profiles:
+      - tools
+
+  vendor:
+    extends:
+      service: go
+    command: go mod vendor
+    profiles:
+      - tools
+
+  fmt:
+    extends:
+      service: go
+    command: go fmt ./...
+    profiles:
+      - tools
