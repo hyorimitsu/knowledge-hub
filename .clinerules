@@ -1,0 +1,108 @@
+# Knowledge Hub Coding Rules
+
+## General Guidelines
+
+- Use meaningful and descriptive names for variables, functions, and classes
+- Write self-documenting code with clear intent
+- Keep functions small and focused on a single responsibility
+- Write tests for all new features and bug fixes
+- Document complex logic and business rules
+- Review code before committing
+
+## Frontend Guidelines
+
+### TypeScript
+- Use TypeScript for all new code
+- Enable strict mode
+- Define proper types/interfaces for all data structures
+- Avoid using `any` type
+
+### Next.js
+- Follow the App Router directory structure conventions
+- Use server components by default
+- Only use client components when necessary
+- Implement proper error boundaries
+- Use proper loading and error states
+
+### Component Structure
+- One component per file
+- Use functional components
+- Keep components small and focused
+- Implement proper prop types
+- Use proper component composition
+
+### State Management
+- Use React hooks for local state
+- Implement proper data fetching strategies
+- Use proper caching mechanisms
+
+### Styling
+- Use Tailwind CSS for styling
+- Follow mobile-first approach
+- Ensure proper accessibility
+- Maintain consistent spacing and layout
+
+### Testing
+- Write unit tests for components
+- Implement integration tests for critical flows
+- Use proper testing utilities
+- Maintain good test coverage
+
+## Backend Guidelines
+
+### Go
+- Follow standard Go project layout
+- Use proper error handling
+- Implement proper logging
+- Use proper dependency injection
+- Follow Go idioms and best practices
+
+### API Design
+- Follow REST principles
+- Use proper HTTP methods
+- Implement proper validation
+- Use proper error responses
+- Document all endpoints using OpenAPI
+
+### Database
+- Use proper database design principles
+- Implement proper migrations
+- Use proper indexing
+- Implement proper multi-tenant isolation
+- Use proper connection pooling
+
+### Testing
+- Write unit tests for all packages
+- Implement integration tests
+- Use proper mocking
+- Maintain good test coverage
+
+## Git Guidelines
+
+### Branches
+- main: Production ready code
+- develop: Development branch
+- feature/*: New features
+- bugfix/*: Bug fixes
+- release/*: Release preparation
+
+### Commits
+- Write meaningful commit messages
+- Use conventional commits format
+- Keep commits focused and atomic
+- Reference issues in commits
+
+### Pull Requests
+- Write proper descriptions
+- Include testing instructions
+- Request reviews from team members
+- Ensure CI passes
+- Fix all code review comments
+
+## Security Guidelines
+
+- Never commit sensitive data
+- Use proper authentication
+- Implement proper authorization
+- Follow security best practices
+- Keep dependencies updated

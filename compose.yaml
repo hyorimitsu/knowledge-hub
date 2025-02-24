@@ -1,0 +1,11 @@
+services:
+  frontend:
+    image: node:20-alpine
+    volumes:
+      - ./frontend:/app
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    command: npm run dev

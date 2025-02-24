@@ -1,0 +1,7 @@
+services:
+  node:
+    image: node:20-alpine
+    volumes:
+      - ./frontend:/app
+    environment:
+      - NODE_ENV=development
