@@ -1,0 +1,29 @@
+services:
+  migrate:
+    build:
+      context: ./backend
+      dockerfile: ../docker/backend/Dockerfile
+    volumes:
+      - ./backend:/go/src/github.com/hyorimitsu/knowledge-hub/backend
+    working_dir: /go/src/github.com/hyorimitsu/knowledge-hub/backend
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=knowledge_hub
+    depends_on:
+      postgres:
+        condition: service_healthy
+    profiles:
+      - tools
+
+  postgres:
+    extends:
+      file: compose.yaml
+      service: postgres
+    profiles:
+      - tools
+
+volumes:
+  postgres_data:
