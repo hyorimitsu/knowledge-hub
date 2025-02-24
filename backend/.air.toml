@@ -1,0 +1,28 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+cmd = 'CGO_ENABLED=0 go build -gcflags "all=-N -l" -o tmp/api ./cmd/api/main.go'
+bin = "tmp/api"
+full_bin = "/go/bin/dlv exec ./tmp/api --headless=true --listen=:2345 --api-version=2 --continue --accept-multiclient"
+include_ext = ["go", "mod", "sum", "env", "tpl", "tmpl", "html"]
+exclude_dir = ["assets", "tmp", "vendor"]
+include_dir = []
+exclude_file = []
+log = "air.log"
+delay = 1000
+stop_on_error = true
+send_interrupt = false
+kill_delay = 500
+
+[log]
+time = false
+
+[color]
+main = "magenta"
+watcher = "cyan"
+build = "yellow"
+runner = "green"
+
+[misc]
+clean_on_exit = true
