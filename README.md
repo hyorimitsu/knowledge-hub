@@ -47,7 +47,59 @@ This project is primarily generated using [Roo Code](https://github.com/RooInc/r
 - Go (for local backend development)
 
 ### Development Setup
-(To be added)
+
+1. Clone the repository
+```bash
+git clone https://github.com/hyorimitsu/knowledge-hub.git
+cd knowledge-hub
+```
+
+2. Start the development environment
+```bash
+# Start all services
+docker compose up -d
+
+# View logs
+docker compose logs -f
+```
+
+3. Database Operations
+```bash
+# Run database migrations
+docker compose -f compose-db-tools.yaml run --rm migrate up
+
+# Rollback migrations
+docker compose -f compose-db-tools.yaml run --rm migrate down
+
+# Check migration version
+docker compose -f compose-db-tools.yaml run --rm migrate version
+```
+
+4. Development Commands
+```bash
+# Run tests
+docker compose -f compose-tools.yaml run --rm test
+
+# Run linter
+docker compose -f compose-tools.yaml run --rm lint
+
+# Generate OpenAPI documentation
+docker compose -f compose-tools.yaml run --rm swag
+
+# Update Go dependencies
+docker compose -f compose-tools.yaml run --rm tidy
+
+# Vendor dependencies
+docker compose -f compose-tools.yaml run --rm vendor
+
+# Format Go code
+docker compose -f compose-tools.yaml run --rm fmt
+```
+
+5. Access the applications
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8080
+- API Documentation: http://localhost:8080/swagger/
 
 ## Project Status
 🚧 Currently under development
