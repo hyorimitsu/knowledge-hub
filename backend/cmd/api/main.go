@@ -12,6 +12,7 @@ import (
 	"gorm.io/gorm"
 
 	_ "github.com/hyorimitsu/knowledge-hub/backend/docs/openapi"
+	appErrors "github.com/hyorimitsu/knowledge-hub/backend/internal/infrastructure/errors"
 	"github.com/hyorimitsu/knowledge-hub/backend/internal/infrastructure/persistence"
 )
 
@@ -23,11 +24,24 @@ import (
 func main() {
 	// Initialize Echo
 	e := echo.New()
+	
+	// Configure custom logger
+	logger := appErrors.NewLogger(appErrors.DefaultLogConfig)
+	logger.SetEcho(e)
+	
+	// Register custom validator
+	appErrors.RegisterEchoValidator(e)
+	
+	// Set custom HTTP error handler
+	appErrors.RegisterErrorHandlers(e)
 
 	// Middleware
+	e.Use(middleware.RequestID())
 	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
+	e.Use(appErrors.RecoverWithConfig()) // Use our custom recover middleware
 	e.Use(middleware.CORS())
+	e.Use(appErrors.ErrorHandler()) // Use our custom error handler middleware
+	e.Use(appErrors.ValidationMiddleware()) // Use our validation middleware
 
 	// Database connection
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Tokyo",
@@ -51,7 +65,37 @@ func main() {
 	{
 		// Health check
 		api.GET("/health", func(c echo.Context) error {
-			return c.JSON(200, map[string]string{"status": "ok"})
+			return appErrors.SendOK(c, map[string]string{"status": "ok"})
+		})
+
+		// Test error handling
+		api.GET("/test-error/:type", func(c echo.Context) error {
+			errorType := c.Param("type")
+			
+			switch errorType {
+			case "validation":
+				fieldErrors := map[string]string{
+					"username": "Username is required",
+					"email":    "Email must be valid",
+				}
+				return appErrors.NewValidationError("Validation failed", fieldErrors, nil)
+			case "not-found":
+				return appErrors.NotFound("Resource not found", nil)
+			case "unauthorized":
+				return appErrors.Unauthorized("Authentication required", nil)
+			case "forbidden":
+				return appErrors.Forbidden("Access denied", nil)
+			case "conflict":
+				return appErrors.Conflict("Resource already exists", nil)
+			case "internal":
+				return appErrors.InternalServerError("Something went wrong", nil)
+			case "domain":
+				return appErrors.NewDomainError(appErrors.ErrTenantNotFound, "Tenant not found", nil)
+			case "panic":
+				panic("Test panic")
+			default:
+				return appErrors.SendOK(c, map[string]string{"message": "No error"})
+			}
 		})
 	}
 
