@@ -45,3 +45,7 @@ func (r *Repositories) Tag() repository.TagRepository {
 func (r *Repositories) Comment() repository.CommentRepository {
 	return r.comment
 }
+
+func (r *Repositories) DB() *gorm.DB {
+	return r.db
+}
