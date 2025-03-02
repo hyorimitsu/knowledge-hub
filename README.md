@@ -1,8 +1,17 @@
 # Knowledge Hub
 
-Knowledge Hub is a multi-tenant knowledge sharing platform built with modern technologies.
+Knowledge Hub is a multi-tenant knowledge sharing platform built with modern technologies. This project demonstrates the capabilities of [Roo Code](https://github.com/RooInc/roo-code) (previously known as Roo Cline), an AI-powered development tool.
 
-This project is primarily generated using [Roo Code](https://github.com/RooInc/roo-code) (previously known as Roo Cline), an AI-powered development tool.
+## Repository Purpose
+
+This repository was created with the primary goal of **building a functional web application using Roo Code**. While the programming languages and Docker usage were specified, other aspects (libraries, architecture design, coding style, etc.) are **100% AI-generated outputs adopted without modification**.
+
+Please note the following important points:
+- The application may contain numerous bugs
+- The architecture, code structure, and coding style are **not intended to serve as reference material**
+- Ideally, **human guidance should provide detailed instructions and corrections**
+
+The content of this repository is intended for testing and experimental use of Roo Code and does not guarantee production-level quality or best practices.
 
 ## Project Structure
 
@@ -11,9 +20,9 @@ This project is primarily generated using [Roo Code](https://github.com/RooInc/r
 ├── frontend/          # Next.js frontend application
 ├── backend/           # Go/Echo backend application
 ├── docker/            # Docker related files
-├── docs/             # Project documentation
-├── .clinerules       # Project coding rules
-└── clinelogs/        # Development process logs
+├── docs/              # Project documentation
+├── .clinerules        # Project coding rules
+└── clinelogs/         # Development process logs
 ```
 
 ## Technology Stack
