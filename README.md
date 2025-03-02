@@ -8,7 +8,7 @@ This repository was created with the primary goal of **building a functional web
 
 Please note the following important points:
 - The application may contain numerous bugs
-- The architecture, code structure, and coding style are **not intended to serve as reference material**
+- The architecture, code structure, coding style, etc are **not intended to serve as reference material**
 - Ideally, **human guidance should provide detailed instructions and corrections**
 
 The content of this repository is intended for testing and experimental use of Roo Code and does not guarantee production-level quality or best practices.
