@@ -75,13 +75,13 @@ docker compose logs -f
 3. Database Operations
 ```bash
 # Run database migrations
-docker compose -f compose-db-tools.yaml run --rm migrate up
+docker compose -f compose-db-tools.yaml run --rm migrate /go/src/github.com/hyorimitsu/knowledge-hub/backend/scripts/migrate.sh up
 
 # Rollback migrations
-docker compose -f compose-db-tools.yaml run --rm migrate down
+docker compose -f compose-db-tools.yaml run --rm migrate /go/src/github.com/hyorimitsu/knowledge-hub/backend/scripts/migrate.sh down
 
 # Check migration version
-docker compose -f compose-db-tools.yaml run --rm migrate version
+docker compose -f compose-db-tools.yaml run --rm migrate /go/src/github.com/hyorimitsu/knowledge-hub/backend/scripts/migrate.sh version
 ```
 
 4. Development Commands
