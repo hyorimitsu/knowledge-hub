@@ -101,7 +101,8 @@ func (r *Router) setupProtectedRoutes(api *echo.Group) {
 		knowledge.NewCreateKnowledgeUseCase(r.repositories.Knowledge(), r.repositories.User(), r.repositories.Tag(), r.repositories.Tenant()),
 		knowledge.NewUpdateKnowledgeUseCase(r.repositories.Knowledge(), r.repositories.Tag(), r.repositories.Tenant()),
 		knowledge.NewDeleteKnowledgeUseCase(r.repositories.Knowledge(), r.repositories.Tenant()),
-		knowledge.NewSearchKnowledgeUseCase(r.repositories.Knowledge(), r.repositories.Tag(), r.repositories.Tenant(), r.repositories.DB()),
+		knowledge.NewSearchKnowledgeUseCase(r.repositories.Knowledge(), r.repositories.Tag(), r.repositories.Tenant()),
+		r.repositories.Knowledge(),
 	)
 	knowledgeHandler.RegisterRoutes(protected)
 
