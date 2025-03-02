@@ -14,6 +14,7 @@ import (
 	_ "github.com/hyorimitsu/knowledge-hub/backend/docs/openapi"
 	appErrors "github.com/hyorimitsu/knowledge-hub/backend/internal/infrastructure/errors"
 	"github.com/hyorimitsu/knowledge-hub/backend/internal/infrastructure/persistence"
+	"github.com/hyorimitsu/knowledge-hub/backend/internal/interfaces/api"
 )
 
 // @title Knowledge Hub API
@@ -39,7 +40,15 @@ func main() {
 	e.Use(middleware.RequestID())
 	e.Use(middleware.Logger())
 	e.Use(appErrors.RecoverWithConfig()) // Use our custom recover middleware
-	e.Use(middleware.CORS())
+	
+	// Configure CORS
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:3000"},
+		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
+		AllowCredentials: true,
+	}))
+	
 	e.Use(appErrors.ErrorHandler()) // Use our custom error handler middleware
 	e.Use(appErrors.ValidationMiddleware()) // Use our validation middleware
 
@@ -58,46 +67,40 @@ func main() {
 
 	// Initialize repositories
 	repos := persistence.NewRepositories(db)
-	_ = repos // Temporary to avoid unused variable error until we implement handlers
 
-	// API routes
-	api := e.Group("/api")
-	{
-		// Health check
-		api.GET("/health", func(c echo.Context) error {
-			return appErrors.SendOK(c, map[string]string{"status": "ok"})
-		})
+	// Setup API routes
+	router := api.NewRouter(e, repos)
+	router.SetupRoutes()
 
-		// Test error handling
-		api.GET("/test-error/:type", func(c echo.Context) error {
-			errorType := c.Param("type")
-			
-			switch errorType {
-			case "validation":
-				fieldErrors := map[string]string{
-					"username": "Username is required",
-					"email":    "Email must be valid",
-				}
-				return appErrors.NewValidationError("Validation failed", fieldErrors, nil)
-			case "not-found":
-				return appErrors.NotFound("Resource not found", nil)
-			case "unauthorized":
-				return appErrors.Unauthorized("Authentication required", nil)
-			case "forbidden":
-				return appErrors.Forbidden("Access denied", nil)
-			case "conflict":
-				return appErrors.Conflict("Resource already exists", nil)
-			case "internal":
-				return appErrors.InternalServerError("Something went wrong", nil)
-			case "domain":
-				return appErrors.NewDomainError(appErrors.ErrTenantNotFound, "Tenant not found", nil)
-			case "panic":
-				panic("Test panic")
-			default:
-				return appErrors.SendOK(c, map[string]string{"message": "No error"})
+	// Test error handling
+	e.GET("/api/test-error/:type", func(c echo.Context) error {
+		errorType := c.Param("type")
+		
+		switch errorType {
+		case "validation":
+			fieldErrors := map[string]string{
+				"username": "Username is required",
+				"email":    "Email must be valid",
 			}
-		})
-	}
+			return appErrors.NewValidationError("Validation failed", fieldErrors, nil)
+		case "not-found":
+			return appErrors.NotFound("Resource not found", nil)
+		case "unauthorized":
+			return appErrors.Unauthorized("Authentication required", nil)
+		case "forbidden":
+			return appErrors.Forbidden("Access denied", nil)
+		case "conflict":
+			return appErrors.Conflict("Resource already exists", nil)
+		case "internal":
+			return appErrors.InternalServerError("Something went wrong", nil)
+		case "domain":
+			return appErrors.NewDomainError(appErrors.ErrTenantNotFound, "Tenant not found", nil)
+		case "panic":
+			panic("Test panic")
+		default:
+			return appErrors.SendOK(c, map[string]string{"message": "No error"})
+		}
+	})
 
 	// Swagger
 	e.GET("/swagger/*", echoSwagger.WrapHandler)

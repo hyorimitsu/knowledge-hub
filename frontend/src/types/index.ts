@@ -3,6 +3,8 @@ export interface User {
   name: string
   email: string
   avatar?: string
+  role: string
+  tenantId?: string
 }
 
 export interface Knowledge {
