@@ -94,12 +94,50 @@ docker compose -f compose-tools.yaml run --rm vendor
 
 # Format Go code
 docker compose -f compose-tools.yaml run --rm fmt
+
+# Frontend development commands
+# Install npm packages
+docker compose -f compose-tools.yaml run --rm node npm install
+
+# Add a specific npm package
+docker compose -f compose-tools.yaml run --rm node npm install package-name
+
+# Run npm scripts
+docker compose -f compose-tools.yaml run --rm node npm run script-name
 ```
 
 5. Access the applications
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8080
 - API Documentation: http://localhost:8080/swagger/
+
+### Troubleshooting
+
+#### API Connectivity Issues
+
+If you encounter 404 errors when the frontend tries to connect to the backend API:
+
+1. Make sure both the frontend and backend servers are running
+2. Check that the Next.js proxy configuration in `frontend/next.config.ts` is correctly set up:
+   ```typescript
+   async rewrites() {
+     return [
+       {
+         source: '/api/:path*',
+         destination: 'http://localhost:8080/api/:path*',
+       },
+     ];
+   }
+   ```
+3. Ensure the backend CORS configuration in `backend/cmd/api/main.go` allows requests from the frontend:
+   ```go
+   e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+     AllowOrigins: []string{"http://localhost:3000"},
+     AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
+     AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
+     AllowCredentials: true,
+   }))
+   ```
 
 ## Project Status
 🚧 Currently under development
