@@ -184,6 +184,24 @@ export class ApiClient {
     return this.handleResponse<Knowledge[]>(response)
   }
 
+  async searchKnowledge(query?: string, tagIDs?: string[], authorID?: string): Promise<Knowledge[]> {
+    // Build query parameters
+    const params = new URLSearchParams();
+    if (query) params.append('query', query);
+    if (authorID) params.append('author_id', authorID);
+    if (tagIDs && tagIDs.length > 0) {
+      tagIDs.forEach(tagID => params.append('tag_ids', tagID));
+    }
+
+    const url = `${this.baseUrl}${API_ENDPOINTS.KNOWLEDGE.LIST}?${params.toString()}`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse<Knowledge[]>(response);
+  }
+
   async getKnowledge(id: string): Promise<Knowledge> {
     const response = await fetch(`${this.baseUrl}${API_ENDPOINTS.KNOWLEDGE.GET(id)}`, {
       method: 'GET',
