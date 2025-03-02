@@ -3,6 +3,7 @@ services:
     image: node:20-alpine
     volumes:
       - ./frontend:/app
+    working_dir: /app
     environment:
       - NODE_ENV=development
 
@@ -55,5 +56,28 @@ services:
     extends:
       service: go
     command: go fmt ./...
+    profiles:
+      - tools
+
+  create-tenant:
+    extends:
+      service: node
+    command: sh -c "npm install node-fetch && node /app/create-tenant.js"
+    volumes:
+      - ./create-tenant.js:/app/create-tenant.js
+    networks:
+      - default
+    profiles:
+      - tools
+
+  create-tenant-sql:
+    image: postgres:16-alpine
+    command: psql -h postgres -U postgres -d knowledge_hub -f /scripts/create-tenant.sql
+    volumes:
+      - ./create-tenant.sql:/scripts/create-tenant.sql
+    environment:
+      - PGPASSWORD=postgres
+    networks:
+      - default
     profiles:
       - tools
