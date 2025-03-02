@@ -13,6 +13,7 @@ type CreateKnowledgeInput struct {
 	Content  string
 	AuthorID string
 	TenantID string
+	Status   string   // Optional status, defaults to KnowledgeStatusPublished if empty
 	TagIDs   []string
 }
 

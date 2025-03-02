@@ -10,7 +10,6 @@ type CreateTagUseCase interface {
 // CreateTagInput contains the data needed to create a tag
 type CreateTagInput struct {
 	Name     string
-	Color    string
 	TenantID string
 }
 
@@ -23,7 +22,6 @@ type UpdateTagUseCase interface {
 type UpdateTagInput struct {
 	ID       string
 	Name     string
-	Color    string
 	TenantID string
 }
 

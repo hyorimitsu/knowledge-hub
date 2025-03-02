@@ -69,12 +69,20 @@ func (uc *createKnowledgeUseCase) Execute(input CreateKnowledgeInput) (*model.Kn
 
 	// Create knowledge
 	now := time.Now()
+	
+	// Use provided status or default to published
+	status := model.KnowledgeStatusPublished
+	if input.Status != "" {
+		status = input.Status
+	}
+	
 	knowledge := &model.Knowledge{
 		ID:        uuid.New().String(),
 		Title:     input.Title,
 		Content:   input.Content,
 		AuthorID:  input.AuthorID,
 		TenantID:  input.TenantID,
+		Status:    status,
 		Tags:      []model.Tag{},
 		Comments:  []model.Comment{},
 		CreatedAt: now,
