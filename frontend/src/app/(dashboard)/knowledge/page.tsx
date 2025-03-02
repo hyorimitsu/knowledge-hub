@@ -18,33 +18,48 @@ export default function KnowledgeListPage() {
   useEffect(() => {
     const fetchData = async () => {
       await withErrorHandling(async () => {
-        // Fetch knowledge
-        const knowledgeData = await apiClient.getKnowledgeList()
-        setKnowledge(knowledgeData)
-
         // Fetch tags
         const tagsData = await apiClient.getTagList()
         setTags(tagsData)
+        
+        // Initial knowledge fetch
+        const knowledgeData = await apiClient.getKnowledgeList()
+        setKnowledge(knowledgeData)
       })
     }
 
     fetchData()
   }, [withErrorHandling])
 
-  const filteredKnowledge = knowledge.filter((item) => {
-    // Filter by search query
-    const matchesSearch =
-      searchQuery === '' ||
-      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.content.toLowerCase().includes(searchQuery.toLowerCase())
+  // Search knowledge when search query or selected tags change
+  useEffect(() => {
+    const searchData = async () => {
+      await withErrorHandling(async () => {
+        // Only perform search if there are search criteria
+        if (searchQuery || selectedTags.length > 0) {
+          const results = await apiClient.searchKnowledge(
+            searchQuery || undefined,
+            selectedTags.length > 0 ? selectedTags : undefined
+          )
+          setKnowledge(results)
+        } else if (searchQuery === '' && selectedTags.length === 0) {
+          // Reset to all knowledge when search criteria are cleared
+          const knowledgeData = await apiClient.getKnowledgeList()
+          setKnowledge(knowledgeData)
+        }
+      })
+    }
 
-    // Filter by selected tags
-    const matchesTags =
-      selectedTags.length === 0 ||
-      selectedTags.some((tagId) => item.tags.includes(tagId))
+    // Debounce search to avoid too many requests
+    const timeoutId = setTimeout(() => {
+      searchData()
+    }, 300)
 
-    return matchesSearch && matchesTags
-  })
+    return () => clearTimeout(timeoutId)
+  }, [searchQuery, selectedTags, withErrorHandling])
+
+  // No need for client-side filtering anymore
+  const filteredKnowledge = knowledge
 
   const handleTagToggle = (tagId: string) => {
     setSelectedTags((prev) =>

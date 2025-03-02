@@ -5,6 +5,7 @@ import (
 
 	appErrors "github.com/hyorimitsu/knowledge-hub/backend/internal/infrastructure/errors"
 	"github.com/hyorimitsu/knowledge-hub/backend/internal/domain/model"
+	"github.com/hyorimitsu/knowledge-hub/backend/internal/domain/repository"
 	"github.com/hyorimitsu/knowledge-hub/backend/internal/usecase/knowledge"
 )
 
@@ -13,6 +14,7 @@ type KnowledgeHandler struct {
 	updateKnowledgeUseCase knowledge.UpdateKnowledgeUseCase
 	deleteKnowledgeUseCase knowledge.DeleteKnowledgeUseCase
 	searchKnowledgeUseCase knowledge.SearchKnowledgeUseCase
+	knowledgeRepository    repository.KnowledgeRepository
 }
 
 func NewKnowledgeHandler(
@@ -20,12 +22,14 @@ func NewKnowledgeHandler(
 	updateKnowledgeUseCase knowledge.UpdateKnowledgeUseCase,
 	deleteKnowledgeUseCase knowledge.DeleteKnowledgeUseCase,
 	searchKnowledgeUseCase knowledge.SearchKnowledgeUseCase,
+	knowledgeRepository repository.KnowledgeRepository,
 ) *KnowledgeHandler {
 	return &KnowledgeHandler{
 		createKnowledgeUseCase: createKnowledgeUseCase,
 		updateKnowledgeUseCase: updateKnowledgeUseCase,
 		deleteKnowledgeUseCase: deleteKnowledgeUseCase,
 		searchKnowledgeUseCase: searchKnowledgeUseCase,
+		knowledgeRepository:    knowledgeRepository,
 	}
 }
 
@@ -122,29 +126,18 @@ func (h *KnowledgeHandler) Get(c echo.Context) error {
 		return appErrors.Unauthorized("Authentication required", nil)
 	}
 
-	// Search for knowledge with ID
-	knowledges, err := h.searchKnowledgeUseCase.Execute(knowledge.SearchKnowledgeInput{
-		Query:    id,
-		TenantID: claims.TenantID,
-	})
+	// Get knowledge by ID directly from repository
+	var knowledgeEntry *model.Knowledge
+	knowledgeEntry, err := h.knowledgeRepository.FindByID(id, claims.TenantID)
 	if err != nil {
 		return appErrors.InternalServerError("Failed to get knowledge", err)
 	}
 
-	// Find the knowledge with the exact ID
-	var foundKnowledge *model.Knowledge
-	for _, k := range knowledges {
-		if k.ID == id {
-			foundKnowledge = k
-			break
-		}
-	}
-
-	if foundKnowledge == nil {
+	if knowledgeEntry == nil {
 		return appErrors.NotFound("Knowledge not found", nil)
 	}
 
-	return appErrors.SendOK(c, foundKnowledge)
+	return appErrors.SendOK(c, knowledgeEntry)
 }
 
 // Update handles updating a knowledge
