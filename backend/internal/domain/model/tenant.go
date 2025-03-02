@@ -11,6 +11,11 @@ type Tenant struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+// TableName specifies the table name for Tenant
+func (Tenant) TableName() string {
+	return "tenants"
+}
+
 type Settings struct {
 	Theme    Theme    `json:"theme" gorm:"embedded"`
 	Features Features `json:"features" gorm:"embedded"`
