@@ -1,6 +1,8 @@
 package persistence
 
 import (
+	"strings"
+	
 	"gorm.io/gorm"
 
 	"github.com/hyorimitsu/knowledge-hub/backend/internal/domain/model"
@@ -56,6 +58,39 @@ func (r *knowledgeRepository) Update(knowledge *model.Knowledge) error {
 		// Update knowledge
 		return tx.Save(knowledge).Error
 	})
+}
+
+func (r *knowledgeRepository) Search(query string, tenantID string, tagIDs []string, authorID string) ([]*model.Knowledge, error) {
+	db := r.db.DB.Model(&model.Knowledge{}).
+		Preload("Tags").
+		Preload("Comments").
+		Where("tenant_id = ?", tenantID)
+
+	// Add search conditions
+	if query != "" {
+		searchQuery := "%" + strings.ToLower(query) + "%"
+		db = db.Where("LOWER(knowledge.title) LIKE ? OR LOWER(knowledge.content) LIKE ?", searchQuery, searchQuery)
+	}
+
+	// Filter by author if provided
+	if authorID != "" {
+		db = db.Where("knowledge.author_id = ?", authorID)
+	}
+
+	// Filter by tags if provided
+	if len(tagIDs) > 0 {
+		db = db.Joins("JOIN knowledge_tags ON knowledge_tags.knowledge_id = knowledge.id").
+			Where("knowledge_tags.tag_id IN ?", tagIDs).
+			Group("knowledge.id, knowledge.title, knowledge.content, knowledge.author_id, knowledge.tenant_id, knowledge.status, knowledge.created_at, knowledge.updated_at")
+	}
+
+	// Execute query
+	var results []*model.Knowledge
+	if err := db.Find(&results).Error; err != nil {
+		return nil, err
+	}
+
+	return results, nil
 }
 
 func (r *knowledgeRepository) Delete(id string, tenantID string) error {
