@@ -45,18 +45,11 @@ func (uc *createTagUseCase) Execute(input CreateTagInput) (*model.Tag, error) {
 		return nil, errors.New("tenant not found")
 	}
 
-	// Set default color if not provided
-	color := input.Color
-	if color == "" {
-		color = "#3498db" // Default blue color
-	}
-
 	// Create tag
 	now := time.Now()
 	tag := &model.Tag{
 		ID:        uuid.New().String(),
 		Name:      input.Name,
-		Color:     color,
 		TenantID:  input.TenantID,
 		CreatedAt: now,
 		UpdatedAt: now,

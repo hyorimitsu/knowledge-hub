@@ -56,9 +56,6 @@ func (uc *updateTagUseCase) Execute(input UpdateTagInput) (*model.Tag, error) {
 	if input.Name != "" {
 		tag.Name = input.Name
 	}
-	if input.Color != "" {
-		tag.Color = input.Color
-	}
 
 	tag.UpdatedAt = time.Now()
 
