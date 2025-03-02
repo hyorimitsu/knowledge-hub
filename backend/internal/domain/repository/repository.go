@@ -14,6 +14,7 @@ type KnowledgeRepository interface {
 	Create(knowledge *model.Knowledge) error
 	FindByID(id string, tenantID string) (*model.Knowledge, error)
 	FindAll(tenantID string) ([]*model.Knowledge, error)
+	Search(query string, tenantID string, tagIDs []string, authorID string) ([]*model.Knowledge, error)
 	Update(knowledge *model.Knowledge) error
 	Delete(id string, tenantID string) error
 }
